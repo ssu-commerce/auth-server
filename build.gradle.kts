@@ -10,6 +10,7 @@ plugins {
 
 group = "com.ssu.commerce"
 version = "0.0.1-SNAPSHOT"
+val coreVersion="beta-2022.04.13"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 configurations {
@@ -24,23 +25,20 @@ repositories {
 		name = "GitHubPackages"
 		url = uri("https://maven.pkg.github.com/ssu-commerce/ssu-commerce-core")
 		credentials {
-			username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
-			password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+			username = findUserName()
+			password = findToken()
 		}
 	}
 }
 
-dependencies {
-	implementation("com.ssu.commerce:ssu-commerce-core:2022.04.1")
+fun findUserName() = (project.findProperty("gpr.user") as String?).nullWhenEmpty()?: System.getenv("USERNAME")
+fun findToken() = ( project.findProperty("gpr.key") as String?).nullWhenEmpty() ?: System.getenv("TOKEN")
 
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.boot:spring-boot-starter-security")
-	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-	developmentOnly("org.springframework.boot:spring-boot-devtools")
-	runtimeOnly("com.h2database:h2")
+fun String?.nullWhenEmpty() = if(this.isNullOrEmpty()) null else this
+
+dependencies {
+	implementation("com.ssu.commerce:ssu-commerce-core:$coreVersion")
+
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")

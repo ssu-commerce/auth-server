@@ -1,0 +1,5 @@
+server:
+  port: 5555
+jwt:
+  accessTokenValidMS: 3600000
+  refreshTokenValidMS: 604800000

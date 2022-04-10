@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "jwt.accessTokenValidMS",
+      "type": "java.lang.Long",
+      "description": "인증토큰 만료기간."
+    },
+    {
+      "name": "jwt.refreshTokenValidMS",
+      "type": "java.lang.Long",
+      "description": "세션 리프레시 토큰 만료기간."
+    }
+  ]
+}

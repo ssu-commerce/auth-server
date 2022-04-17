@@ -1,6 +1,8 @@
 package com.ssu.commerce.auth.controller
 
 import com.ssu.commerce.auth.service.AuthService
+import com.ssu.commerce.core.security.AuthInfo
+import com.ssu.commerce.core.security.Authenticated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -18,8 +20,9 @@ class AuthController(
     fun signUp(@RequestBody signUpRequest: SignUpRequest) =
         authService.signUp(signUpRequest)
 
-    @GetMapping()
-    fun test() {
+    @GetMapping("/auth-info")
+    fun test(@Authenticated authInfo:AuthInfo): AuthInfo {
+        return authInfo
     }
 }
 

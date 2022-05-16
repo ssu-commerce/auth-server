@@ -10,7 +10,7 @@ plugins {
 
 group = "com.ssu.commerce"
 version = "0.0.1-SNAPSHOT"
-val coreVersion="2022.04.2"
+val coreVersion="beta-2022.05.24"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 configurations {

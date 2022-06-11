@@ -21,7 +21,7 @@ class AuthController(
         authService.signUp(signUpRequest)
 
     @GetMapping("/auth-info")
-    fun test(@Authenticated authInfo:AuthInfo): AuthInfo {
+    fun test(@Authenticated authInfo: AuthInfo): AuthInfo {
         return authInfo
     }
 }

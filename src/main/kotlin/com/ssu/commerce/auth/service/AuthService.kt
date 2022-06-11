@@ -26,7 +26,7 @@ class AuthService(
         return generateAccessToken(account.userId, account.roles)
     }
 
-    private fun String.verifyPassword(requestedPassword:String) {
+    private fun String.verifyPassword(requestedPassword: String) {
         if (!passwordEncoder.matches(requestedPassword, this)) throw NotFoundException()
     }
 

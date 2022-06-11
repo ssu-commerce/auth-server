@@ -14,6 +14,12 @@ version = "0.0.1-SNAPSHOT"
 val coreVersion = "beta-2022.05.29"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
+tasks {
+    jar {
+        enabled = false
+    }
+}
+
 configurations {
     compileOnly {
         extendsFrom(configurations.annotationProcessor.get())

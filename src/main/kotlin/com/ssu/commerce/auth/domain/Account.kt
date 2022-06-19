@@ -1,6 +1,8 @@
 package com.ssu.commerce.auth.domain
 
+import com.ssu.commerce.auth.domain.type.PointAccountStatus
 import com.ssu.commerce.core.security.UserRole
+import java.math.BigDecimal
 import javax.persistence.Column
 import javax.persistence.ElementCollection
 import javax.persistence.Entity
@@ -18,7 +20,7 @@ data class Account(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val accountId: Long? = null,
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     val userId: String,
     @Column(nullable = false)
     val password: String,
@@ -26,4 +28,16 @@ data class Account(
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     var roles: MutableSet<UserRole>
-)
+) {
+    fun checkEmailVerifiedUser() {
+        // TODO 이메일 인증 진행시 구현
+    }
+    fun createPointAccount(): PointAccount {
+        checkEmailVerifiedUser()
+        return PointAccount(
+            account = this,
+            balance = BigDecimal.ZERO,
+            status = PointAccountStatus.ACTIVE
+        )
+    }
+}

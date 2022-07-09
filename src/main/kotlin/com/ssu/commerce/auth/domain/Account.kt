@@ -1,6 +1,7 @@
 package com.ssu.commerce.auth.domain
 
 import com.ssu.commerce.auth.domain.type.PointAccountStatus
+import com.ssu.commerce.auth.service.SessionTokens
 import com.ssu.commerce.core.security.UserRole
 import java.math.BigDecimal
 import javax.persistence.Column
@@ -20,10 +21,15 @@ data class Account(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val accountId: Long? = null,
+
     @Column(nullable = false, unique = true)
     val userId: String,
+
     @Column(nullable = false)
     val password: String,
+
+    @Column(nullable = false)
+    private var refreshToken: String,
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
@@ -39,5 +45,10 @@ data class Account(
             balance = BigDecimal.ZERO,
             status = PointAccountStatus.ACTIVE
         )
+    }
+
+    fun updateRefreshToken(tokens: SessionTokens): SessionTokens {
+        refreshToken = tokens.refreshToken.token
+        return tokens
     }
 }

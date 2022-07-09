@@ -11,7 +11,7 @@ plugins {
 
 group = "com.ssu.commerce"
 version = "0.0.1-SNAPSHOT"
-val coreVersion = "beta-2022.06.33"
+val coreVersion = "ORIGIN"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 tasks {

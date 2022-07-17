@@ -22,6 +22,10 @@ class AuthController(
     fun signUp(@RequestBody signUpRequest: SignUpRequest) =
         authService.signUp(signUpRequest)
 
+    @PostMapping("/refresh")
+    fun signIn(@RequestBody refreshTokenRequest: RefreshTokenRequest) =
+        authService.refreshToken(refreshTokenRequest)
+
     @GetMapping("/info")
     fun test(@Authenticated @Parameter(hidden = true) authInfo: AuthInfo): AuthInfo {
         return authInfo
@@ -37,4 +41,9 @@ data class SignInRequest(
 data class SignUpRequest(
     val id: String,
     val password: String
+)
+
+data class RefreshTokenRequest(
+    val accessToken: String,
+    val refreshToken: String
 )

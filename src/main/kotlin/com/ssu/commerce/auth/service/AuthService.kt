@@ -61,7 +61,7 @@ class AuthService(
     fun refreshToken(req: RefreshTokenRequest): SessionTokens? {
         val userId = validateAccessTokenAndRefreshTokenPairIsValid(req.accessToken, req.refreshToken)
         return accountRepository.findByUserId(userId)
-            ?.apply { if (getRefreshToken() != req.refreshToken) throw RefreshFailedException() }
+            ?.apply { checkRefreshTokenIsValid(getRefreshToken(), req.refreshToken, roles) }
             ?.let { it.updateRefreshToken(issueTokens(it.userId, it.roles)) }
             ?: throw SignInFailedException()
     }
@@ -71,6 +71,10 @@ class AuthService(
         val refreshTokenUserId = jwtTokenProvider.getUserIdFromToken(refreshToken)
         if (accessTokenUserId != refreshTokenUserId) throw SignInFailedException()
         return refreshTokenUserId
+    }
+
+    private fun checkRefreshTokenIsValid(accountRefreshToken: String, refreshToken: String, userRoles: Set<UserRole>) {
+        if (!userRoles.contains(UserRole.ROLE_SERVER) && accountRefreshToken != refreshToken) throw RefreshFailedException()
     }
 
     private fun getUserIdFromAccessTokenIgnoreExpired(accessToken: String): String =

@@ -45,6 +45,7 @@ fun String?.nullWhenEmpty() = if (this.isNullOrEmpty()) null else this
 
 dependencies {
     implementation("com.ssu.commerce:ssu-commerce-core:$coreVersion")
+    implementation("io.jsonwebtoken:jjwt-api:0.11.2")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

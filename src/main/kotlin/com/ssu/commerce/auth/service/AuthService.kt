@@ -27,6 +27,7 @@ class AuthService(
     fun signIn(req: SignInRequest): SessionTokens =
         accountRepository.findByUserId(req.id)
             ?.apply { password.verifyPassword(req.password) }
+            ?.apply { req.userRole?.let { if (!roles.contains(it)) throw SignInFailedException() } }
             ?.let { it.updateRefreshToken(issueTokens(it.userId, it.roles)) }
             ?: throw SignInFailedException()
 

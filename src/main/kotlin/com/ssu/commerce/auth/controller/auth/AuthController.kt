@@ -3,6 +3,7 @@ package com.ssu.commerce.auth.controller.auth
 import com.ssu.commerce.auth.service.AuthService
 import com.ssu.commerce.core.security.AuthInfo
 import com.ssu.commerce.core.security.Authenticated
+import com.ssu.commerce.core.security.UserRole
 import io.swagger.v3.oas.annotations.Parameter
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -29,7 +30,8 @@ class AuthController(
 
 data class SignInRequest(
     val id: String,
-    val password: String
+    val password: String,
+    val userRole: UserRole?
 )
 
 data class SignUpRequest(

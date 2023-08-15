@@ -38,6 +38,7 @@ data class Account(
     fun checkEmailVerifiedUser() {
         // TODO 이메일 인증 진행시 구현
     }
+
     fun createPointAccount(): PointAccount {
         checkEmailVerifiedUser()
         return PointAccount(
@@ -46,6 +47,8 @@ data class Account(
             status = PointAccountStatus.ACTIVE
         )
     }
+
+    fun getRefreshToken() = refreshToken
 
     fun updateRefreshToken(tokens: SessionTokens): SessionTokens {
         refreshToken = tokens.refreshToken.token

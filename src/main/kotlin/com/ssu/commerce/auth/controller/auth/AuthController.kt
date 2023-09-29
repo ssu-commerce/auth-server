@@ -3,7 +3,9 @@ package com.ssu.commerce.auth.controller.auth
 import com.ssu.commerce.auth.service.AuthService
 import com.ssu.commerce.core.security.AuthInfo
 import com.ssu.commerce.core.security.Authenticated
+import com.ssu.commerce.core.security.user.SsuCommerceAuthenticatedPrincipal
 import io.swagger.v3.oas.annotations.Parameter
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -22,7 +24,10 @@ class AuthController(
         authService.signUp(signUpRequest)
 
     @GetMapping("/info")
-    fun test(@Authenticated @Parameter(hidden = true) authInfo: AuthInfo): AuthInfo {
+    fun test(
+        @AuthenticationPrincipal @Parameter(hidden = true) principal: SsuCommerceAuthenticatedPrincipal,
+        @Authenticated @Parameter(hidden = true) authInfo: AuthInfo
+    ): AuthInfo {
         return authInfo
     }
 }

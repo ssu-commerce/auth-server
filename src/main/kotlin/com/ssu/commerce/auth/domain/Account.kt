@@ -2,8 +2,11 @@ package com.ssu.commerce.auth.domain
 
 import com.ssu.commerce.auth.domain.type.PointAccountStatus
 import com.ssu.commerce.auth.service.SessionTokens
-import com.ssu.commerce.core.security.UserRole
+import com.ssu.commerce.core.jpa.BaseEntity
+import com.ssu.commerce.core.security.user.UserRole
+import org.hibernate.annotations.GenericGenerator
 import java.math.BigDecimal
+import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.ElementCollection
 import javax.persistence.Entity
@@ -11,16 +14,16 @@ import javax.persistence.EnumType
 import javax.persistence.Enumerated
 import javax.persistence.FetchType
 import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.Table
 
 @Entity
 @Table(name = "accounts")
 data class Account(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val accountId: Long? = null,
+    @Id @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(columnDefinition = "BINARY(16)")
+    val accountId: UUID? = null,
 
     @Column(nullable = false, unique = true)
     val userId: String,
@@ -29,15 +32,16 @@ data class Account(
     val password: String,
 
     @Column(nullable = false)
-    private var refreshToken: String,
+    private var refreshToken: String = "",
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     var roles: MutableSet<UserRole>
-) {
+) : BaseEntity() {
     fun checkEmailVerifiedUser() {
         // TODO 이메일 인증 진행시 구현
     }
+
     fun createPointAccount(): PointAccount {
         checkEmailVerifiedUser()
         return PointAccount(

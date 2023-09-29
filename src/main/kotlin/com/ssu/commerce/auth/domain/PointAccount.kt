@@ -4,6 +4,7 @@ import com.ssu.commerce.auth.domain.type.PointAccountStatus
 import com.ssu.commerce.auth.domain.type.TransactionType
 import com.ssu.commerce.auth.exception.InvalidBalanceException
 import com.ssu.commerce.auth.exception.PointAccountInactiveException
+import com.ssu.commerce.core.jpa.BaseTimeEntity
 import org.hibernate.annotations.DynamicUpdate
 import java.math.BigDecimal
 import java.time.LocalDateTime
@@ -42,13 +43,7 @@ data class PointAccount(
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     var status: PointAccountStatus,
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    val createdAt: LocalDateTime? = LocalDateTime.now(),
-
-    @Column(name = "updated_at", nullable = false)
-    var updatedAt: LocalDateTime = LocalDateTime.now()
-) {
+) : BaseTimeEntity() {
     private fun checkAccountIsActive() {
         if (status != PointAccountStatus.ACTIVE) throw PointAccountInactiveException()
     }
@@ -74,6 +69,6 @@ data class PointAccount(
         else minus(requestAmount)
 
     private fun BigDecimal.validateBalance() =
-        if (this.signum() <1) throw InvalidBalanceException()
+        if (this.signum() < 1) throw InvalidBalanceException()
         else this
 }

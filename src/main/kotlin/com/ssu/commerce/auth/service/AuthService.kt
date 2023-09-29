@@ -6,13 +6,14 @@ import com.ssu.commerce.auth.domain.Account
 import com.ssu.commerce.auth.domain.AccountRepository
 import com.ssu.commerce.auth.domain.PointAccountRepository
 import com.ssu.commerce.auth.exception.SignInFailedException
-import com.ssu.commerce.core.security.JwtTokenDto
-import com.ssu.commerce.core.security.JwtTokenProvider
-import com.ssu.commerce.core.security.UserRole
+import com.ssu.commerce.core.security.jwt.JwtTokenDto
+import com.ssu.commerce.core.security.jwt.JwtTokenProvider
+import com.ssu.commerce.core.security.user.UserRole
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 
 @Service
 @Transactional
@@ -27,7 +28,7 @@ class AuthService(
     fun signIn(req: SignInRequest): SessionTokens =
         accountRepository.findByUserId(req.id)
             ?.apply { password.verifyPassword(req.password) }
-            ?.let { it.updateRefreshToken(issueTokens(it.userId, it.roles)) }
+            ?.let { it.updateRefreshToken(issueTokens(it.accountId!!, it.userId, it.roles)) }
             ?: throw SignInFailedException()
 
     private fun String.verifyPassword(requestedPassword: String) {
@@ -36,17 +37,17 @@ class AuthService(
 
     fun signUp(req: SignUpRequest): SessionTokens {
         val userRole = verifyAccountAndGiveRole(req)
-        val (accessToken, refreshToken) = issueTokens(req.id, userRole)
         val account = accountRepository.save(
             Account(
                 userId = req.id,
                 password = passwordEncoder.encode(req.password),
-                roles = userRole,
-                refreshToken = refreshToken.token
+                roles = userRole
             )
         )
+        val sessionTokens = issueTokens(account.accountId!!, req.id, userRole)
+        account.updateRefreshToken(sessionTokens)
         pointAccountRepository.save(account.createPointAccount())
-        return SessionTokens(accessToken, refreshToken)
+        return SessionTokens(sessionTokens.accessToken, sessionTokens.refreshToken)
     }
 
     private fun verifyAccountAndGiveRole(req: SignUpRequest): MutableSet<UserRole> {
@@ -54,14 +55,14 @@ class AuthService(
         return userRole
     }
 
-    private fun issueTokens(userId: String, roles: Set<UserRole>) =
-        SessionTokens(generateAccessToken(userId, roles), generateRefreshToken(userId, roles))
+    private fun issueTokens(userId: UUID, userName: String, roles: Set<UserRole>) =
+        SessionTokens(generateAccessToken(userId, userName, roles), generateRefreshToken(userId, userName, roles))
 
-    private fun generateAccessToken(userId: String, roles: Set<UserRole>): JwtTokenDto =
-        jwtTokenProvider.generateToken(userId, roles, accessTokenValidMilSecond)
+    private fun generateAccessToken(userId: UUID, userName: String, roles: Set<UserRole>): JwtTokenDto =
+        jwtTokenProvider.generateToken(userId, userName, roles, accessTokenValidMilSecond)
 
-    private fun generateRefreshToken(userId: String, roles: Set<UserRole>): JwtTokenDto =
-        jwtTokenProvider.generateToken(userId, roles, refreshTokenValidMilSecond)
+    private fun generateRefreshToken(userId: UUID, userName: String, roles: Set<UserRole>): JwtTokenDto =
+        jwtTokenProvider.generateToken(userId, userName, roles, refreshTokenValidMilSecond)
 }
 
 data class SessionTokens(

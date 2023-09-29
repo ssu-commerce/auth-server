@@ -4,10 +4,10 @@ import com.ssu.commerce.auth.domain.PointTransactionProjection
 import com.ssu.commerce.auth.domain.PointTransactionRequest
 import com.ssu.commerce.auth.domain.PointTransactionResponse
 import com.ssu.commerce.auth.service.PointService
-import com.ssu.commerce.core.security.AuthInfo
-import com.ssu.commerce.core.security.Authenticated
+import com.ssu.commerce.core.security.user.SsuCommerceAuthenticatedPrincipal
 import io.swagger.v3.oas.annotations.Parameter
 import org.springframework.format.annotation.DateTimeFormat
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -23,15 +23,16 @@ class PointController(
 ) {
     @GetMapping("/history")
     fun getPointTransaction(
-        @Authenticated @Parameter(hidden = true) authInfo: AuthInfo,
+        @AuthenticationPrincipal @Parameter(hidden = true) principal: SsuCommerceAuthenticatedPrincipal,
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) fromDateTime: LocalDate,
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) toDateTime: LocalDate
-    ): List<PointTransactionProjection> = pointService.getPointTransaction(authInfo.userId, fromDateTime, toDateTime)
+    ): List<PointTransactionProjection> =
+        pointService.getPointTransaction(principal.userId, fromDateTime, toDateTime)
 
     @PostMapping("/account")
     fun createPointAccount(
-        @Authenticated @Parameter(hidden = true) authInfo: AuthInfo
-    ) = pointService.createPointAccount(authInfo.userId)
+        @AuthenticationPrincipal @Parameter(hidden = true) principal: SsuCommerceAuthenticatedPrincipal,
+    ) = pointService.createPointAccount(principal.name)
 
     @PostMapping("/transaction")
     fun createTransaction(

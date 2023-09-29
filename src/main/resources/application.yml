@@ -1,9 +1,8 @@
 springdoc:
   swagger-ui:
-    path: /swagger-ui.html
     base-package: "com.ssu.commerce.auth"
     title: Auth
-    version: 0.0.0
+
 jwt:
   accessTokenValidMS: 3600000
   refreshTokenValidMS: 604800000

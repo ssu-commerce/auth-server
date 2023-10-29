@@ -13,8 +13,14 @@ pluginManagement {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/ssu-commerce/ssu-commerce-core")
             credentials {
-                username = extra.properties["gpr.user"] as String?
-                password = extra.properties["gpr.key"] as String?
+                var userName = extra.properties["gpr.user"] as String?
+                if (userName.isNullOrEmpty()) userName = System.getenv("USERNAME")
+
+                var token = extra.properties["gpr.key"] as String?
+                if (token.isNullOrEmpty()) token = System.getenv("TOKEN")
+
+                username = userName
+                password = token
             }
         }
     }

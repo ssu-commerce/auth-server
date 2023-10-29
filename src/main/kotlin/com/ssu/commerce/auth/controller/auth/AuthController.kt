@@ -1,8 +1,6 @@
 package com.ssu.commerce.auth.controller.auth
 
 import com.ssu.commerce.auth.service.AuthService
-import com.ssu.commerce.core.security.AuthInfo
-import com.ssu.commerce.core.security.Authenticated
 import com.ssu.commerce.core.security.user.SsuCommerceAuthenticatedPrincipal
 import io.swagger.v3.oas.annotations.Parameter
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -26,9 +24,8 @@ class AuthController(
     @GetMapping("/info")
     fun test(
         @AuthenticationPrincipal @Parameter(hidden = true) principal: SsuCommerceAuthenticatedPrincipal,
-        @Authenticated @Parameter(hidden = true) authInfo: AuthInfo
-    ): AuthInfo {
-        return authInfo
+    ): SsuCommerceAuthenticatedPrincipal {
+        return principal
     }
 }
 

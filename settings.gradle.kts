@@ -1,4 +1,4 @@
-rootProject.name = "auth"
+rootProject.name = "account"
 
 fun findUserName() = (extra.properties["gpr.user"] as String?).nullWhenEmpty() ?: System.getenv("USERNAME")
 fun findToken() = (extra.properties["gpr.key"] as String?).nullWhenEmpty() ?: System.getenv("TOKEN")
@@ -16,6 +16,13 @@ pluginManagement {
                 username = extra.properties["gpr.user"] as String?
                 password = extra.properties["gpr.key"] as String?
             }
+        }
+    }
+
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id.contains("ssu.commerce.plugin"))
+                useVersion(extra.properties["ssu-commerce-core-plugin"] as String)
         }
     }
 }

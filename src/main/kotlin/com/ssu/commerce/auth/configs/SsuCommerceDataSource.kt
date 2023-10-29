@@ -1,7 +1,7 @@
 package com.ssu.commerce.auth.configs
 
-import com.ssu.commerce.core.configs.AbstractDataSourceProperties
-import com.ssu.commerce.core.configs.DataSourceConfig
+import com.ssu.commerce.core.jpa.config.AbstractDataSourceProperties
+import com.ssu.commerce.core.jpa.config.DataSourceConfig
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile

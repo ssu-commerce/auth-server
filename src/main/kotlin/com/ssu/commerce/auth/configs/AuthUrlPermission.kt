@@ -1,6 +1,6 @@
 package com.ssu.commerce.auth.configs
 
-import com.ssu.commerce.core.configs.UrlPermissionFilter
+import com.ssu.commerce.core.security.config.UrlPermissionFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
 import org.springframework.http.HttpMethod

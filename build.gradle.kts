@@ -4,20 +4,18 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
     id("org.springframework.boot") version "2.6.6"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    id("com.ssu.commerce.plugin.github-registry")
+    id("com.ssu.commerce.plugin.docker-publish")
+    id("com.ssu.commerce.plugin.maven-publish")
     kotlin("jvm") version "1.6.10"
     kotlin("plugin.spring") version "1.6.10"
     kotlin("plugin.jpa") version "1.6.10"
 }
-
 group = "com.ssu.commerce"
-version = "0.0.1-SNAPSHOT"
-val coreVersion = "2023.07.4"
-java.sourceCompatibility = JavaVersion.VERSION_11
+version = System.getenv("VERSION") ?: "NoVersion"
 
-tasks {
-    jar {
-        enabled = false
-    }
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
 }
 
 configurations {
@@ -26,25 +24,10 @@ configurations {
     }
 }
 
-repositories {
-    mavenCentral()
-    maven {
-        name = "GitHubPackages"
-        url = uri("https://maven.pkg.github.com/ssu-commerce/ssu-commerce-core")
-        credentials {
-            username = findUserName()
-            password = findToken()
-        }
-    }
-}
-
-fun findUserName() = (project.findProperty("gpr.user") as String?).nullWhenEmpty() ?: System.getenv("USERNAME")
-fun findToken() = (project.findProperty("gpr.key") as String?).nullWhenEmpty() ?: System.getenv("TOKEN")
-
-fun String?.nullWhenEmpty() = if (this.isNullOrEmpty()) null else this
-
 dependencies {
-    implementation("com.ssu.commerce:ssu-commerce-core:$coreVersion")
+    implementation("com.ssu.commerce:ssu-commerce-core-web:${properties["ssu-commerce-core"]}")
+    implementation("com.ssu.commerce:ssu-commerce-core-security:${properties["ssu-commerce-core"]}")
+    implementation("com.ssu.commerce:ssu-commerce-core-jpa:${properties["ssu-commerce-core"]}")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

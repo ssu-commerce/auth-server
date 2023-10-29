@@ -1,9 +1,11 @@
 package com.ssu.commerce.auth.domain
 
 import com.ssu.commerce.auth.domain.type.TransactionType
+import com.ssu.commerce.core.jpa.BaseTimeEntity
 import org.hibernate.annotations.DynamicUpdate
 import java.math.BigDecimal
 import java.time.LocalDateTime
+import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.EnumType
@@ -56,17 +58,12 @@ data class PointTransaction(
     val approvedAt: LocalDateTime,
 
     @Column(name = "reconciled", nullable = false)
-    val isReconciled: Boolean = false,
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    val createdAt: LocalDateTime = LocalDateTime.now(),
-
-    @Column(name = "updated_at", nullable = false)
-    val updatedAt: LocalDateTime = LocalDateTime.now()
-)
+    val isReconciled: Boolean = false
+) : BaseTimeEntity()
 
 data class PointTransactionRequest(
-    val accountId: Long,
+    val accountFrom: UUID,
+    val accountTo: UUID,
     val transactionId: Long,
     val transactionType: TransactionType,
     val transactionAmount: BigDecimal,
@@ -75,7 +72,7 @@ data class PointTransactionRequest(
 
 data class PointTransactionResponse(
     val pointTransactionId: Long,
-    val accountId: Long,
+    val accountId: UUID,
     val transactionId: Long,
     val transactionType: TransactionType,
     val transactionAmount: BigDecimal,

@@ -6,10 +6,13 @@ import com.ssu.commerce.auth.domain.PointAccountRepository
 import com.ssu.commerce.auth.domain.PointTransactionRepository
 import com.ssu.commerce.auth.domain.PointTransactionRequest
 import com.ssu.commerce.auth.domain.PointTransactionResponse
+import com.ssu.commerce.auth.domain.type.TransactionType
+import com.ssu.commerce.auth.exception.AccountNotFoundException
 import org.springframework.data.jpa.repository.Lock
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
+import java.util.UUID
 import javax.persistence.LockModeType
 
 @Service
@@ -17,22 +20,30 @@ import javax.persistence.LockModeType
 class PointService(
     private val accountRepository: AccountRepository,
     private val pointAccountRepository: PointAccountRepository,
-    private val PointTransactionRepository: PointTransactionRepository
+    private val pointTransactionRepository: PointTransactionRepository
 ) {
-    fun createPointAccount(userId: String): PointAccount =
-        accountRepository.findByUserId(userId)!!
-            .let { pointAccountRepository.save(it.createPointAccount()) }
+    fun createPointAccount(userId: String): PointAccount {
+        val account = accountRepository.findByUserId(userId) ?: throw AccountNotFoundException()
+        return pointAccountRepository.save(account.createPointAccount())
+    }
 
     @Transactional(readOnly = false)
-    fun getPointTransaction(userId: String, fromDateTime: LocalDate, toDateTime: LocalDate) =
-        PointTransactionRepository.findAllByApprovedAtGreaterThanEqualAndApprovedAtLessThan(
+    fun getPointTransaction(userId: UUID, fromDateTime: LocalDate, toDateTime: LocalDate) =
+        pointTransactionRepository.findAllByApprovedAtGreaterThanEqualAndApprovedAtLessThan(
             fromDateTime.atStartOfDay(),
             toDateTime.plusDays(1).atStartOfDay()
         )
 
     @Lock(value = LockModeType.PESSIMISTIC_WRITE)
-    fun createTransaction(req: PointTransactionRequest): PointTransactionResponse =
-        pointAccountRepository.findByAccount_AccountId(req.accountId)
-            .run { PointTransactionRepository.save(createPointTransaction(req)) }
-            .run { PointTransactionResponse(this) }
+    fun createTransaction(req: PointTransactionRequest): PointTransactionResponse {
+        return when (req.transactionType) {
+            TransactionType.CHARGE ->
+                pointAccountRepository.findByAccount_AccountId(req.accountTo)
+                    .run { pointTransactionRepository.save(createPointTransaction(req)) }
+                    .run { PointTransactionResponse(this) }
+
+            TransactionType.ORDER -> TODO("아직 구현되지 않았습니다.")
+            TransactionType.REWARD -> TODO("아직 구현되지 않았습니다.")
+        }
+    }
 }

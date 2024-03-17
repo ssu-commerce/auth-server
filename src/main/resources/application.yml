@@ -6,3 +6,7 @@ springdoc:
 jwt:
   accessTokenValidMS: 3600000
   refreshTokenValidMS: 604800000
+
+spring:
+  application:
+    name: account

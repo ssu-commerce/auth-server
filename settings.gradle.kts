@@ -1,5 +1,9 @@
 rootProject.name = "account"
 
+include(
+    "api"
+)
+
 fun findUserName() = (extra.properties["gpr.user"] as String?).nullWhenEmpty() ?: System.getenv("USERNAME")
 fun findToken() = (extra.properties["gpr.key"] as String?).nullWhenEmpty() ?: System.getenv("TOKEN")
 

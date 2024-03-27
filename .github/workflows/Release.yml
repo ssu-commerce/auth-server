@@ -4,13 +4,14 @@ on:
   workflow_run:
     workflows: [ "Build Test" ]
     types: [ completed ]
-    branches: [ release ]
+    branches: [ main ]
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
 
     steps:
       - uses: actions/checkout@v2
@@ -43,7 +44,7 @@ jobs:
 
       - name: Publish
         env:
-          VERSION: "${{ steps.current-time.outputs.formattedTime }}.${{github.run_number}}"
+          VERSION: "beta-${{ steps.current-time.outputs.formattedTime }}.${{github.run_number}}"
           USERNAME: ${{secrets.USERNAME}}
           TOKEN: ${{secrets.TOKEN}}
-        run: ./gradlew jib
+        run: ./gradlew jib -p ./api

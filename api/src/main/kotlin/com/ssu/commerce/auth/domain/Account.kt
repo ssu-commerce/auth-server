@@ -1,7 +1,6 @@
 package com.ssu.commerce.auth.domain
 
 import com.ssu.commerce.auth.domain.type.PointAccountStatus
-import com.ssu.commerce.auth.service.SessionTokens
 import com.ssu.commerce.core.jpa.BaseEntity
 import com.ssu.commerce.core.security.user.UserRole
 import org.hibernate.annotations.GenericGenerator
@@ -26,13 +25,13 @@ data class Account(
     val accountId: UUID? = null,
 
     @Column(nullable = false, unique = true)
-    val userId: String,
+    val email: String,
 
     @Column(nullable = false)
     val password: String,
 
-    @Column(nullable = false)
-    private var refreshToken: String = "",
+    @Column(nullable = false, unique = true)
+    val nickName: String,
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
@@ -49,10 +48,5 @@ data class Account(
             balance = BigDecimal.ZERO,
             status = PointAccountStatus.ACTIVE
         )
-    }
-
-    fun updateRefreshToken(tokens: SessionTokens): SessionTokens {
-        refreshToken = tokens.refreshToken.token
-        return tokens
     }
 }

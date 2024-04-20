@@ -8,6 +8,7 @@ import com.ssu.commerce.auth.domain.PointTransactionRequest
 import com.ssu.commerce.auth.domain.PointTransactionResponse
 import com.ssu.commerce.auth.domain.type.TransactionType
 import com.ssu.commerce.auth.exception.AccountNotFoundException
+import com.ssu.commerce.auth.exception.PointAccountInactiveException
 import org.springframework.data.jpa.repository.Lock
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -38,7 +39,7 @@ class PointService(
     fun createTransaction(req: PointTransactionRequest): PointTransactionResponse {
         return when (req.transactionType) {
             TransactionType.CHARGE ->
-                pointAccountRepository.findByAccount_AccountId(req.accountTo)
+                (pointAccountRepository.findByAccountId(req.accountTo) ?: throw PointAccountInactiveException())
                     .run { pointTransactionRepository.save(createPointTransaction(req)) }
                     .run { PointTransactionResponse(this) }
 

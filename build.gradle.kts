@@ -22,6 +22,7 @@ tasks {
 subprojects {
     apply(plugin = "kotlin")
     apply(plugin = "kotlin-spring")
+    apply(plugin = "kotlin-jpa")
     apply(plugin = "io.spring.dependency-management")
     apply(plugin = "org.springframework.boot")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")

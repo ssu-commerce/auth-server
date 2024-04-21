@@ -23,7 +23,7 @@ class PointService(
     private val pointTransactionRepository: PointTransactionRepository
 ) {
     fun createPointAccount(userId: String): PointAccount {
-        val account = accountRepository.findByUserId(userId) ?: throw AccountNotFoundException()
+        val account = accountRepository.findByEmail(userId) ?: throw AccountNotFoundException()
         return pointAccountRepository.save(account.createPointAccount())
     }
 

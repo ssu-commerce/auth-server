@@ -22,50 +22,37 @@ class AuthService(
     private val passwordEncoder: PasswordEncoder,
     private val jwtTokenProvider: JwtTokenProvider,
     @Value("\${jwt.accessTokenValidMS}") private val accessTokenValidMilSecond: Long = 0,
-    @Value("\${jwt.refreshTokenValidMS}") private val refreshTokenValidMilSecond: Long = 0,
     private val pointAccountRepository: PointAccountRepository
 ) {
-    fun signIn(req: SignInRequest): SessionTokens =
-        accountRepository.findByUserId(req.id)
-            ?.apply { password.verifyPassword(req.password) }
-            ?.let { it.updateRefreshToken(issueTokens(it.accountId!!, it.userId, it.roles)) }
-            ?: throw SignInFailedException()
-
-    private fun String.verifyPassword(requestedPassword: String) {
-        if (!passwordEncoder.matches(requestedPassword, this)) throw SignInFailedException()
+    fun signIn(req: SignInRequest): JwtTokenDto {
+        val user = accountRepository.findByEmail(req.email) ?: throw SignInFailedException()
+        verifyPassword(user.password, req.password)
+        return generateAccessToken(user.accountId!!, user.email, user.roles)
     }
 
-    fun signUp(req: SignUpRequest): SessionTokens {
+    private fun verifyPassword(userPassword: String, requestedPassword: String) {
+        if (!passwordEncoder.matches(requestedPassword, userPassword)) throw SignInFailedException()
+    }
+
+    fun signUp(req: SignUpRequest) {
         val userRole = verifyAccountAndGiveRole(req)
         val account = accountRepository.save(
             Account(
-                userId = req.id,
+                email = req.email,
+                nickName = req.nickName,
                 password = passwordEncoder.encode(req.password),
                 roles = userRole
             )
         )
-        val sessionTokens = issueTokens(account.accountId!!, req.id, userRole)
-        account.updateRefreshToken(sessionTokens)
         pointAccountRepository.save(account.createPointAccount())
-        return SessionTokens(sessionTokens.accessToken, sessionTokens.refreshToken)
     }
 
     private fun verifyAccountAndGiveRole(req: SignUpRequest): MutableSet<UserRole> {
+        // TODO 사용자 유형에 따른 롤관리를 어떻게 해야할지 정해지면 내용 추가
         val userRole = mutableSetOf(UserRole.ROLE_USER)
         return userRole
     }
 
-    private fun issueTokens(userId: UUID, userName: String, roles: Set<UserRole>) =
-        SessionTokens(generateAccessToken(userId, userName, roles), generateRefreshToken(userId, userName, roles))
-
     private fun generateAccessToken(userId: UUID, userName: String, roles: Set<UserRole>): JwtTokenDto =
         jwtTokenProvider.generateToken(userId, userName, roles, accessTokenValidMilSecond)
-
-    private fun generateRefreshToken(userId: UUID, userName: String, roles: Set<UserRole>): JwtTokenDto =
-        jwtTokenProvider.generateToken(userId, userName, roles, refreshTokenValidMilSecond)
 }
-
-data class SessionTokens(
-    val accessToken: JwtTokenDto,
-    val refreshToken: JwtTokenDto
-)

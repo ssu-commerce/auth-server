@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component
 class AuthUrlPermission : UrlPermissionFilter {
     override fun urlPermissions(authorizeRequests: ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry): ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry =
         authorizeRequests
-            .antMatchers(HttpMethod.POST, "/sign-in", "/sign-up").permitAll()
+            .antMatchers(HttpMethod.POST, "/auth/**").permitAll()
             .anyRequest().authenticated()
 
     @Bean

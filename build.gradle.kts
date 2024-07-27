@@ -28,6 +28,7 @@ subprojects {
     apply(plugin = "org.springframework.boot")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
     apply(plugin = "com.ssu.commerce.plugin.github-registry")
+    apply(plugin = "org.sonarqube")
 
     group = "com.ssu.commerce"
     version = System.getenv("VERSION") ?: "NoVersion"

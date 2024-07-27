@@ -1,5 +1,6 @@
 plugins {
     id("com.ssu.commerce.plugin.docker-publish")
+    id("org.sonarqube") version "3.5.0.2730"
 }
 
 dependencies {

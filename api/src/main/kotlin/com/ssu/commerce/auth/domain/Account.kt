@@ -4,6 +4,7 @@ import com.ssu.commerce.auth.domain.type.PointAccountStatus
 import com.ssu.commerce.core.jpa.BaseEntity
 import com.ssu.commerce.core.security.user.UserRole
 import org.hibernate.annotations.GenericGenerator
+import org.hibernate.annotations.Type
 import java.math.BigDecimal
 import java.util.UUID
 import javax.persistence.Column
@@ -19,9 +20,10 @@ import javax.persistence.Table
 @Entity
 @Table(name = "accounts")
 data class Account(
-    @Id @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(columnDefinition = "BINARY(16)")
+    @Id
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+    @Type(type = "uuid-char")
     val accountId: UUID? = null,
 
     @Column(nullable = false, unique = true)

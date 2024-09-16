@@ -6,14 +6,16 @@ import com.ssu.commerce.auth.exception.InvalidBalanceException
 import com.ssu.commerce.auth.exception.PointAccountInactiveException
 import com.ssu.commerce.core.jpa.BaseTimeEntity
 import org.hibernate.annotations.DynamicUpdate
+import org.hibernate.annotations.GenericGenerator
+import org.hibernate.annotations.Type
 import java.math.BigDecimal
 import java.time.LocalDateTime
+import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
 import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
@@ -29,9 +31,12 @@ import javax.persistence.UniqueConstraint
     ]
 )
 data class PointAccount(
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val pointAccountId: Long? = null,
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+    @Type(type = "uuid-char")
+    val pointAccountId: UUID? = null,
 
     @ManyToOne
     @JoinColumn(name = "account_id")

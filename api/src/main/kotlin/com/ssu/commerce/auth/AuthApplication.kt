@@ -1,6 +1,6 @@
 package com.ssu.commerce.auth
 
-import com.ssu.commerce.core.web.configs.EnableSsuCommerceCore
+import com.ssu.commerce.core.EnableSsuCommerceCore
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 

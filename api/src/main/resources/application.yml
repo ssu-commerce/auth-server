@@ -1,12 +1,3 @@
-springdoc:
-  swagger-ui:
-    base-package: "com.ssu.commerce.auth"
-    title: Auth
-
-jwt:
-  accessTokenValidMS: 3600000
-  refreshTokenValidMS: 604800000
-
 spring:
   application:
     name: account

@@ -8,6 +8,7 @@ plugins {
     kotlin("jvm") version "1.6.10"
     kotlin("plugin.spring") version "1.6.10"
     kotlin("plugin.jpa") version "1.6.10"
+    id("org.sonarqube") version "3.5.0.2730"
 }
 
 tasks {
@@ -27,6 +28,7 @@ subprojects {
     apply(plugin = "org.springframework.boot")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
     apply(plugin = "com.ssu.commerce.plugin.github-registry")
+    apply(plugin = "org.sonarqube")
 
     group = "com.ssu.commerce"
     version = System.getenv("VERSION") ?: "NoVersion"
